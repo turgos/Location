@@ -1,0 +1,40 @@
+#!/bin/bash
+
+set -x
+
+if [ ! -d $OPENSHIFT_DATA_DIR/jdk1.8.0_20 ]
+        then
+                cd $OPENSHIFT_DATA_DIR
+                wget http://www.java.net/download/jdk8u20/archive/b17/binaries/jdk-8u20-ea-bin-b17-linux-x64-04_jun_2014.tar.gz
+                tar xvf *.tar.gz
+                rm -f *.tar.gz
+fi
+
+if [ ! -d $OPENSHIFT_DATA_DIR/gradle-2.2.1 ]
+        then
+                cd $OPENSHIFT_DATA_DIR
+                wget https://services.gradle.org/distributions/gradle-2.2.1-bin.zip
+                unzip gradle-2.2.1-bin.zip
+                rm -f gradle-2.2.1-bin.zip
+fi
+
+if [ ! -d $OPENSHIFT_DATA_DIR/gradle ]
+        then
+                cd $OPENSHIFT_DATA_DIR
+				mkdir gradle
+fi
+
+if [ ! -d $OPENSHIFT_DATA_DIR/logs ]
+        then
+                cd $OPENSHIFT_DATA_DIR
+				mkdir logs
+fi
+
+cd $OPENSHIFT_REPO_DIR
+export GRADLE_USER_HOME=$OPENSHIFT_DATA_DIR/gradle
+export GRADLE_HOME=$OPENSHIFT_DATA_DIR/gradle-2.2.1
+export GRADLE_OPTS="-Xms384m -Xmx412m"
+export JAVA_HOME=$OPENSHIFT_DATA_DIR/jdk1.8.0_20
+export PATH=$JAVA_HOME/bin:$GRADLE_HOME/bin:$PATH
+
+gradle bootRepackage
